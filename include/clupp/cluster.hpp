@@ -1,4 +1,0 @@
-#ifndef CLUPP_CLUSTER_HPP
-#define CLUPP_CLUSTER_HPP
-
-#endif //CLUPP_CLUSTER_HPP

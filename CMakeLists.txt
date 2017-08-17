@@ -13,8 +13,10 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_library(
   ${PROJECT_NAME}
-  include/clupp/cluster.hpp
-  src/cluster.cpp
+  include/clupp/distance.hpp
+  include/clupp/pam.hpp
+  src/distance.cpp
+  src/pam.cpp
 )
 
 target_include_directories(
