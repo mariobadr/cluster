@@ -6,6 +6,11 @@ project(
   LANGUAGES CXX
 )
 
+# add cmake modules to the include path
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 add_library(
   ${PROJECT_NAME}
   include/clupp/cluster.hpp
@@ -15,4 +20,9 @@ add_library(
 target_include_directories(
   ${PROJECT_NAME}
   PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+)
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  PUBLIC Eigen3::Eigen
 )
