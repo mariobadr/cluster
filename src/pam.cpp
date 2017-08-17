@@ -29,8 +29,9 @@ void partition_around_medoids(int const k, Eigen::MatrixXd const &matrix)
 {
   if(k < 2) {
     throw std::runtime_error("Error: less than two partitions were requested.");
+  } else if(matrix.rows() < k) {
+    throw std::runtime_error("Error: not enough rows to create k partitions.");
   }
-  // TODO: check we have enough observations in matrix for k clusters
 
   build(k, matrix);
   // TODO: perform swap phase
