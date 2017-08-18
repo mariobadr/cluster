@@ -8,16 +8,60 @@
 
 namespace clupp {
 
-struct pam_result {
+/**
+ * The clustering result after partitioning around medoids.
+ */
+class pam_result {
+public:
   /**
-   * The set of row indices that were found to be medoids.
+   * Constructor.
+   *
+   * @param number_of_objects The number of observations (i.e., rows) in the initial data.
+   * @param initial_medoid The first medoid all objects are assigned to.
    */
-  std::set<int> medoids;
+  explicit pam_result(int number_of_objects, int initial_medoid);
 
   /**
-   * The medoid (cluster) each row was assigned to.
+   * Add a new medoid to the result.
+   *
+   * @param medoid The object that is the new medoid.
    */
-  std::vector<int> classification;
+  void add_medoid(int medoid);
+
+  /**
+   * Assign an object to a medoid.
+   *
+   * @param object The object to assign.
+   * @param medoid The object's new medoid.
+   */
+  void assign_medoid(int object, int medoid);
+
+  /**
+   * @return the set of objects that were not medoids.
+   */
+  std::set<int> nonselected_objects() const
+  {
+    return m_nonselected;
+  }
+
+  /**
+   * Find the medoid assigned to an object.
+   *
+   * @param object The object to query.
+   *
+   * @return The medoid the object is assigned to.
+   */
+  int medoid(int object) const
+  {
+    return m_classification.at(static_cast<size_t>(object));
+  }
+
+private:
+  std::set<int> m_medoids;
+
+  std::set<int> m_nonselected;
+
+  std::vector<int> m_classification;
 };
 
 pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix);
