@@ -4,29 +4,38 @@
 
 namespace clupp {
 
-pam_result::pam_result(int number_of_objects, int initial_medoid)
-    : m_classification(number_of_objects, initial_medoid)
-{
-  for(int i = 0; i < number_of_objects; ++i) {
-    m_nonselected.insert(m_nonselected.end(), i);
+/**
+ * Data used during the PAM algorithm.
+ */
+struct pam_data {
+  std::set<int> medoids;
+  std::set<int> nonselected;
+  std::vector<int> classification;
+
+  pam_data(int number_of_objects, int initial_medoid)
+      : classification(number_of_objects, initial_medoid)
+  {
+    for(int i = 0; i < number_of_objects; ++i) {
+      nonselected.insert(nonselected.end(), i);
+    }
+
+    medoids.insert(initial_medoid);
+    nonselected.erase(initial_medoid);
   }
 
-  m_medoids.insert(initial_medoid);
-  m_nonselected.erase(initial_medoid);
-}
+  void assign_medoid(int object, int medoid)
+  {
+    classification[object] = medoid;
+  }
 
-void pam_result::add_medoid(int medoid)
-{
-  m_medoids.insert(medoid);
-  m_nonselected.erase(medoid);
+  void add_medoid(int medoid)
+  {
+    medoids.insert(medoid);
+    nonselected.erase(medoid);
 
-  assign_medoid(medoid, medoid);
-}
-
-void pam_result::assign_medoid(int object, int medoid)
-{
-  m_classification[object] = medoid;
-}
+    assign_medoid(medoid, medoid);
+  }
+};
 
 /**
  * The initial medoid is the object with the minimum sum of dissimilarities to all other objects.
@@ -57,14 +66,14 @@ int find_initial_medoid(Eigen::MatrixXd const &distances)
  *
  * @return The index of the object that was found to be the medoid.
  */
-int find_next_medoid(Eigen::MatrixXd const &distances, pam_result const &current_clustering)
+int find_next_medoid(Eigen::MatrixXd const &distances, pam_data const &current_clustering)
 {
   double maximum_gain = std::numeric_limits<double>::min();
   int next_medoid = 0;
 
   // consider an object i which has not been selected yet
-  for(auto const i : current_clustering.nonselected_objects()) {
-    auto nonselected = current_clustering.nonselected_objects();
+  for(auto const i : current_clustering.nonselected) {
+    auto nonselected = current_clustering.nonselected;
     nonselected.erase(i);
 
     // track the potential gain of selecting i as a new medoid
@@ -73,7 +82,7 @@ int find_next_medoid(Eigen::MatrixXd const &distances, pam_result const &current
     // consider another nonselected object j
     for(auto const j : nonselected) {
       // calculate the dissimilarity between j and its currently assigned cluster
-      double const D_j = distances(j, current_clustering.medoid(j));
+      double const D_j = distances(j, current_clustering.classification[j]);
       // calculate the dissimilarity between j and i
       double const d_j_i = distances(j, i);
 
@@ -100,12 +109,12 @@ int find_next_medoid(Eigen::MatrixXd const &distances, pam_result const &current
  */
 void reclassify_objects(Eigen::MatrixXd const &distances,
     int const new_medoid,
-    pam_result *current_clustering)
+    pam_data *current_clustering)
 {
   current_clustering->add_medoid(new_medoid);
 
-  for(auto const object : current_clustering->nonselected_objects()) {
-    auto const current_distance = distances(object, current_clustering->medoid(object));
+  for(auto const object : current_clustering->nonselected) {
+    auto const current_distance = distances(object, current_clustering->classification[object]);
     auto const potential_distance = distances(object, new_medoid);
 
     if(potential_distance < current_distance) {
@@ -122,14 +131,13 @@ void reclassify_objects(Eigen::MatrixXd const &distances,
  *
  * @return An initial clustering of observations to k objects.
  */
-pam_result build(int const k, Eigen::MatrixXd const &matrix)
+pam_data build(int const k, Eigen::MatrixXd const &distances)
 {
   // select an initial medoid by finding the observation with the minimum sum of dissimilarities
-  Eigen::MatrixXd const distances = calculate_distance_matrix(matrix);
   int const initial_medoid = find_initial_medoid(distances);
 
   // create the initial clustering based on the initial medoid
-  pam_result initial_clustering(static_cast<int>(matrix.rows()), initial_medoid);
+  pam_data initial_clustering(static_cast<int>(distances.rows()), initial_medoid);
 
   // refine the initial clustering with an additional k - 1 medoids
   for(int i = 0; i < k - 1; ++i) {
@@ -140,6 +148,10 @@ pam_result build(int const k, Eigen::MatrixXd const &matrix)
   return initial_clustering;
 }
 
+void refine(Eigen::MatrixXd const &distances, pam_data *initial_clustering)
+{
+}
+
 pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
 {
   if(k < 2) {
@@ -148,9 +160,16 @@ pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
     throw std::runtime_error("Error: not enough rows to create k partitions.");
   }
 
-  auto initial_clustering = build(k, matrix);
-  // TODO: perform swap phase on initial clustering
+  // calculate the distances between observations
+  Eigen::MatrixXd const distances = calculate_distance_matrix(matrix);
 
-  return initial_clustering;
+  auto initial_clustering = build(k, distances);
+  refine(distances, &initial_clustering);
+
+  pam_result final_clustering{};
+  final_clustering.medoids = initial_clustering.medoids;
+  final_clustering.classification = initial_clustering.classification;
+
+  return final_clustering;
 }
 }
