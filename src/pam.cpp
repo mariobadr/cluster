@@ -22,8 +22,7 @@ pam_result build(int const k, Eigen::MatrixXd const &matrix)
 
   pam_result initial_clustering;
   initial_clustering.medoids.insert(initial_medoid);
-  // TODO: assign all observations to initial medoid
-
+  initial_clustering.classification.resize(static_cast<size_t>(matrix.rows()), initial_medoid);
 
   // TODO: find additional medoids until k medoids have been found
 }
