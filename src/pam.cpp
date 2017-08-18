@@ -11,9 +11,11 @@ struct pam_data {
   std::set<int> medoids;
   std::set<int> nonselected;
   std::vector<int> classification;
+  std::vector<int> second_nearest_medoid;
 
   pam_data(int number_of_objects, int initial_medoid)
       : classification(number_of_objects, initial_medoid)
+      , second_nearest_medoid(number_of_objects, initial_medoid)
   {
     for(int i = 0; i < number_of_objects; ++i) {
       nonselected.insert(nonselected.end(), i);
@@ -114,11 +116,18 @@ void reclassify_objects(Eigen::MatrixXd const &distances,
   current_clustering->add_medoid(new_medoid);
 
   for(auto const object : current_clustering->nonselected) {
-    auto const current_distance = distances(object, current_clustering->classification[object]);
+    auto const current_medoid = current_clustering->classification[object];
+    auto const second_closest_medoid = current_clustering->second_nearest_medoid[object];
+
+    auto const current_distance = distances(object, current_medoid);
+    auto const second_distance = distances(object, second_closest_medoid);
     auto const potential_distance = distances(object, new_medoid);
 
     if(potential_distance < current_distance) {
+      current_clustering->second_nearest_medoid[object] = current_medoid;
       current_clustering->assign_medoid(object, new_medoid);
+    } else if(potential_distance < second_distance) {
+      current_clustering->second_nearest_medoid[object] = new_medoid;
     }
   }
 }
