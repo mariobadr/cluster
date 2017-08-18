@@ -4,28 +4,31 @@
 
 namespace clupp {
 
-void build(int const k, Eigen::MatrixXd const &matrix)
+pam_result build(int const k, Eigen::MatrixXd const &matrix)
 {
-  Eigen::MatrixXd const distance_matrix = calculate_distance_matrix(matrix);
+  Eigen::MatrixXd const distances = calculate_distance_matrix(matrix);
 
   // select an initial medoid by finding the observation with the minimum sum of dissimilarities
   int initial_medoid = 0;
   {
     Eigen::VectorXd sum_of_dissimilarities(matrix.rows());
 
-    for (int i = 0; i < distance_matrix.rows(); ++i) {
-      sum_of_dissimilarities(i) = distance_matrix.row(i).sum() + distance_matrix.col(i).sum();
+    for(int i = 0; i < distances.rows(); ++i) {
+      sum_of_dissimilarities(i) = distances.row(i).sum() + distances.col(i).sum();
     }
 
     sum_of_dissimilarities.minCoeff(&initial_medoid);
   }
 
-  // TODO: classify all operations as being part of the initial medoid
+  pam_result initial_clustering;
+  initial_clustering.medoids.insert(initial_medoid);
+  // TODO: assign all observations to initial medoid
+
 
   // TODO: find additional medoids until k medoids have been found
 }
 
-void partition_around_medoids(int const k, Eigen::MatrixXd const &matrix)
+pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
 {
   if(k < 2) {
     throw std::runtime_error("Error: less than two partitions were requested.");
@@ -33,7 +36,9 @@ void partition_around_medoids(int const k, Eigen::MatrixXd const &matrix)
     throw std::runtime_error("Error: not enough rows to create k partitions.");
   }
 
-  build(k, matrix);
-  // TODO: perform swap phase
+  auto initial_clustering = build(k, matrix);
+  // TODO: perform swap phase on initial clustering
+
+  return initial_clustering;
 }
 }
