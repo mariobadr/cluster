@@ -94,7 +94,7 @@ int find_initial_medoid(Eigen::MatrixXd const &distances)
  */
 int find_next_medoid(Eigen::MatrixXd const &distances, pam_data const &clustering)
 {
-  double maximum_gain = std::numeric_limits<double>::min();
+  double maximum_gain = std::numeric_limits<double>::lowest();
   int next_medoid = 0;
 
   // consider an object i which has not been selected yet
