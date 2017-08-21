@@ -185,6 +185,16 @@ pam_data build(int const k, Eigen::MatrixXd const &distances)
   return initial_clustering;
 }
 
+/**
+ * Calculates the effect a swap between i and h will have on the value of the clustering.
+ *
+ * @param distances The distance matrix.
+ * @param i A currently selected medoid.
+ * @param h An object that has not been selected as a medoid.
+ * @param clustering The current clustering state.
+ *
+ * @return The total contribution of the swap. A negative value means the swap improves the clustering.
+ */
 double calculate_swap_cost(Eigen::MatrixXd const &distances,
     int const i,
     int const h,
@@ -201,25 +211,39 @@ double calculate_swap_cost(Eigen::MatrixXd const &distances,
 
     double contribution = 0.0;
     if(D_j >= d_j_i) {
-      // j is closer to i than its current (and therefore any other) medoid
+      // j is not further from i than its current (and therefore any other) medoid
 
+      // calculate distance to second closest medoid
       auto const E_j = distances(j, clustering.second_closest_medoid[j]);
+
       if(d_j_h < E_j) {
+        // j is closer to h than the second closest medoid
+        // if j is closer to i than h, contribution is positive (swap is not favourable)
         contribution = d_j_h - d_j_i;
       } else {
-        //contribution = E_j - D_j;
-        contribution = E_j - d_j_i;
+        // j is at least as distant to h than the second closest medoid
+        // contribution is always positive because h is futher away
+        contribution = E_j - D_j;
       }
     } else if(D_j < d_j_i && D_j > d_j_h) {
+      // j is more distance from i but closer to h
       contribution = d_j_h - D_j;
     }
 
+    // add up all the contributions for the total result of a swap
     total_contribution += contribution;
   }
 
   return total_contribution;
 }
 
+/**
+ * Attempt to improve the set of medoids by considering all pairs of objects where a medoid i has been selected but an
+ * object h has not, and testing if a swap is beneficial.
+ *
+ * @param distances The distance matrix.
+ * @param clustering The clustering state to improve.
+ */
 void refine(Eigen::MatrixXd const &distances, pam_data *clustering)
 {
   bool perform_swaps = true;
@@ -233,6 +257,7 @@ void refine(Eigen::MatrixXd const &distances, pam_data *clustering)
       for(auto const h : clustering->nonselected) {
         auto const contribution = calculate_swap_cost(distances, i, h, *clustering);
 
+        // minimize the total result of a swap (i.e., most negative contribution)
         if(contribution < minimum_contribution) {
           minimum_contribution = contribution;
           old_medoid = i;
@@ -242,9 +267,11 @@ void refine(Eigen::MatrixXd const &distances, pam_data *clustering)
     }
 
     if(minimum_contribution < 0 && old_medoid >= 0 && new_medoid >= 0) {
+      // if the minimum contribution was negative, perform the swap and iterate again
       clustering->swap_medoid(old_medoid, new_medoid);
       reclassify_objects(distances, clustering);
     } else {
+      // a positive minimum contribution means that no swaps were favourable
       perform_swaps = false;
     }
   }

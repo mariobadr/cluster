@@ -23,6 +23,14 @@ struct pam_result {
   std::vector<int> classification;
 };
 
+/**
+ * Minimize the sum of dissimilarities to a set of k medoids.
+ *
+ * @param k The number of clusters.
+ * @param matrix The objects observed.
+ *
+ * @return The clustering found.
+ */
 pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix);
 }
 
