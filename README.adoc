@@ -1,0 +1,71 @@
+= clupp - A C++ library for finding groups in data
+
+This library is a work in progress.
+It can cluster data using the partition around medoids (PAM) algorithm described in:
+
+    Leonard Kaufman and Peter J Rousseeuw. Finding Groups in Data. 1990.
+
+`clupp` represents data using a dynamic `Eigen` matrix with type `double`.
+
+== Usage
+
+[source,cpp]
+----
+#include <clupp/pam.hpp>
+
+int main()
+{
+  // build a 1-dimensional matrix of objects
+  Eigen::VectorXd data(8);
+  data << 942, 2633, 2654, 2137, 373, 434, 1495, 1230;
+
+  // group the data into 3 clusters
+  auto const result = clupp::partition_around_medoids(3, data);
+
+  return EXIT_SUCCESS;
+}
+----
+
+A complete example can be found in  the `examples/pam-1D` directory.
+
+== Compiling
+
+This project uses CMake for compiling.
+CMake can configure the project different build systems and IDEs (type `cmake --help` for a list of generators available for your platform).
+We recommend you create a build directory before invoking CMake to configure the project (`cmake -B`).
+For example, we can perform the configuration step from the project root directory:
+
+  cmake -H. -Bcmake-build-release -DCMAKE_BUILD_TYPE=Release
+  cmake -H. -Bcmake-build-debug -DCMAKE_BUILD_TYPE=Debug
+
+After the configuration step, you can ask CMake to build the project.
+
+  cmake --build cmake-build-release/ --target all
+  cmake --build cmake-build-debug/ --target all
+
+=== Build Options
+
+Build options can be found in `options.cmake`.
+Documentation and example executables can also be built during compilation.
+Simply specify the build option during the configuration step in CMake.
+Using the already generated `cmake-build-release` directory from the previous section, we can:
+
+  cmake -H. -Bcmake-build-release -DCLUPP_BUILD_EXAMPLES=ON
+
+Your IDE or Makefile should now include additional targets when you turn these options on.
+For example, enabling `CLUPP_BUILD_EXAMPLES` should provide access to the `pam-1D` target, which you can build:
+
+  cmake --build cmake-build-release/ --target pam-1D
+
+=== Installation
+
+You can install the library by using the `install` target, for example:
+
+  cmake --build cmake-build-release/ --target install
+
+If you would like to change the default installation directory, you must do so in the configure step:
+
+  cmake -H. -Bcmake-build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="`pwd`/my_install"
+
+If your project also uses cmake, you can find the CMake package configuration files at `<install-prefix>/lib/cmake/clupp`.
+
