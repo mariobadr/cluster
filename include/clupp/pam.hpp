@@ -12,8 +12,14 @@ namespace clupp {
  * The clustering result after partitioning around medoids.
  */
 struct pam_result {
+  /**
+   * The objects that were found to be medoids.
+   */
   std::set<int> medoids;
 
+  /**
+   * The medoid each object was assigned to by the clustering algorithm.
+   */
   std::vector<int> classification;
 };
 
