@@ -1,4 +1,3 @@
-#include <clupp/distance.hpp>
 #include <clupp/pam.hpp>
 
 #include <iostream>
