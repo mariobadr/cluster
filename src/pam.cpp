@@ -2,6 +2,8 @@
 
 #include "clupp/distance.hpp"
 
+#include <iostream>
+
 namespace clupp {
 
 /**
@@ -12,10 +14,12 @@ struct pam_data {
   std::set<int> nonselected;
   std::vector<int> classification;
   std::vector<int> second_closest_medoid;
+  double total_dissimilarity;
 
   pam_data(int number_of_objects, int initial_medoid)
       : classification(number_of_objects, initial_medoid)
-      , second_closest_medoid(number_of_objects, initial_medoid)
+      , second_closest_medoid(number_of_objects, -1)
+      , total_dissimilarity(0.0)
   {
     for(int i = 0; i < number_of_objects; ++i) {
       nonselected.insert(nonselected.end(), i);
@@ -128,36 +132,37 @@ int find_next_medoid(Eigen::MatrixXd const &distances, pam_data const &clusterin
  * @param distances The distance matrix.
  * @param clustering The clustering state to modify.
  */
-double reclassify_objects(Eigen::MatrixXd const &distances, pam_data *clustering)
+void reclassify_objects(Eigen::MatrixXd const &distances, pam_data *clustering)
 {
-  double total_dissimilarity = 0.0;
+  // reset the total dissimilarity
+  clustering->total_dissimilarity = 0.0;
 
-  for(auto const object : clustering->nonselected) {
+  for(int object = 0; object < distances.rows(); ++object) {
+    double closest_distance = std::numeric_limits<double>::max();
+    double second_closest_distance = std::numeric_limits<double>::max();
+
+    int closest_medoid = -1;
+    int second_closest_medoid = -1;
+
     for(auto const medoid : clustering->medoids) {
-      auto const object_medoid = clustering->classification[object];
-      if(object_medoid != medoid) {
-        auto const second_closest_medoid = clustering->second_closest_medoid[object];
+      double const distance = distances(object, medoid);
 
-        auto const current_distance = distances(object, object_medoid);
-        auto const second_distance = distances(object, second_closest_medoid);
-        auto const potential_distance = distances(object, medoid);
+      if(distance < closest_distance || clustering->classification[medoid] == object) {
+        second_closest_distance = closest_distance;
+        second_closest_medoid = closest_medoid;
 
-        if(potential_distance < current_distance) {
-          // this medoid is closer, reclassify the current object
-          clustering->assign_medoid(object, medoid);
-          // the old medoid is now the second closest medoid
-          clustering->second_closest_medoid[object] = object_medoid;
-        } else if(potential_distance < second_distance) {
-          // this medoid is closer than the current second closest medoid, update
-          clustering->second_closest_medoid[object] = medoid;
-        }
+        closest_distance = distance;
+        closest_medoid = medoid;
+      } else if(distance < second_closest_distance) {
+        second_closest_distance = distance;
+        second_closest_medoid = medoid;
       }
     }
 
-    total_dissimilarity += distances(object, clustering->classification[object]);
+    clustering->classification[object] = closest_medoid;
+    clustering->second_closest_medoid[object] = second_closest_medoid;
+    clustering->total_dissimilarity += closest_distance;
   }
-
-  return total_dissimilarity;
 }
 
 /**
