@@ -6,6 +6,9 @@ project(
   LANGUAGES CXX
 )
 
+# include potential build options
+include(options.cmake)
+
 # add cmake modules to the include path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -34,3 +37,9 @@ set_target_properties(
   CXX_STANDARD 14
   CXX_STANDARD_REQUIRED ON
 )
+
+if(CLUPP_BUILD_EXAMPLES)
+  message(STATUS "clupp: Build examples option enabled.")
+
+  add_subdirectory(examples)
+endif()
