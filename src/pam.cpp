@@ -302,7 +302,16 @@ pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
   // copy the intermediate data into the final result
   pam_result final_clustering;
   final_clustering.medoids = initial_clustering.medoids;
-  final_clustering.classification = initial_clustering.classification;
+
+  int cluster_id = 0;
+  for(auto const &medoid : final_clustering.medoids) {
+    final_clustering.medoid_to_cluster[medoid] = cluster_id;
+    ++cluster_id;
+  }
+
+  for(auto const &object : initial_clustering.classification) {
+    final_clustering.classification.push_back(final_clustering.medoid_to_cluster[object]);
+  }
 
   return final_clustering;
 }

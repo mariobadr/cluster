@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 
+#include <map>
 #include <set>
 #include <vector>
 
@@ -18,7 +19,12 @@ struct pam_result {
   std::set<int> medoids;
 
   /**
-   * The medoid each object was assigned to by the clustering algorithm.
+   * The cluster ID each medoid was mapped to.
+   */
+  std::map<int, int> medoid_to_cluster;
+
+  /**
+   * The cluster ID each object was assigned to by the algorithm.
    */
   std::vector<int> classification;
 };
