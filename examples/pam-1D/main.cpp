@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
   if(argc != 2) {
     std::cout << "Missing Argument: please enter the number of clusters to create.\n";
@@ -19,15 +19,14 @@ int main(int argc, char ** argv)
   auto const result = clupp::partition_around_medoids(k, data);
 
   std::cout << "Medoids:\n";
-  for(auto const &medoid: result.medoids) {
-    std::cout << medoid << "\n";
+  for(auto const &medoid : result.medoids) {
+    std::cout << medoid << " given ID C" << result.medoid_to_cluster.at(medoid) << "\n";
   }
 
   std::cout << "\nGrouping:\n";
   for(int i = 0; i < data.rows(); ++i) {
-    std::cout << data(i) << " assigned to medoid " << result.classification[i] << "\n";
+    std::cout << data(i) << " assigned to C" << result.classification[i] << "\n";
   }
-
 
   return EXIT_SUCCESS;
 }
