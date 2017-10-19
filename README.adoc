@@ -1,17 +1,17 @@
-= clupp - A C++ library for finding groups in data
+= A C++ library for finding groups in data
 
 This library is a work in progress.
 It can cluster data using the partition around medoids (PAM) algorithm described in:
 
     Leonard Kaufman and Peter J Rousseeuw. Finding Groups in Data. 1990.
 
-`clupp` represents data using a dynamic `Eigen` matrix with type `double`.
+Data is represented using a dynamic `Eigen` matrix with type `double`.
 
 == Usage
 
 [source,cpp]
 ----
-#include <clupp/pam.hpp>
+#include <cappa/cluster/pam.hpp>
 
 int main()
 {
@@ -20,7 +20,7 @@ int main()
   data << 942, 2633, 2654, 2137, 373, 434, 1495, 1230;
 
   // group the data into 3 clusters
-  auto const result = clupp::partition_around_medoids(3, data);
+  auto const result = cappa::cluster::partition_around_medoids(3, data);
 
   return EXIT_SUCCESS;
 }
@@ -67,5 +67,5 @@ If you would like to change the default installation directory, you must do so i
 
   cmake -H. -Bcmake-build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="`pwd`/my_install"
 
-If your project also uses cmake, you can find the CMake package configuration files at `<install-prefix>/lib/cmake/clupp`.
+If your project also uses cmake, you can find the CMake package configuration files at `<install-prefix>/lib/cmake/cappa-cluster`.
 

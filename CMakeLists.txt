@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 project(
-  clupp
+  cappa-cluster
   VERSION 0.0.1
   LANGUAGES CXX
 )
@@ -16,8 +16,8 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_library(
   ${PROJECT_NAME}
-  include/clupp/distance.hpp
-  include/clupp/pam.hpp
+  include/cappa/cluster/distance.hpp
+  include/cappa/cluster/pam.hpp
   src/distance.cpp
   src/pam.cpp
 )
@@ -43,37 +43,37 @@ set_target_properties(
   DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX}
 )
 
-if(CLUPP_BUILD_EXAMPLES)
-  message(STATUS "clupp: Build examples option enabled.")
+if(CAPPA_CLUSTER_BUILD_EXAMPLES)
+  message(STATUS "cappa-cluster: Build examples option enabled.")
 
   add_subdirectory(examples)
 endif()
 
 # create cmake package
-set(CLUPP_PACKAGE_DESTINATION "lib/cmake/${PROJECT_NAME}")
+set(CAPPA_CLUSTER_PACKAGE_DESTINATION "lib/cmake/${PROJECT_NAME}")
 include(CMakePackageConfigHelpers)
 
 # files to be generated
-set(CLUPP_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
-set(CLUPP_VERSION_CONFIG "${CLUPP_GENERATED_DIR}/${PROJECT_NAME}-config-version.cmake")
-set(CLUPP_PROJECT_CONFIG "${CLUPP_GENERATED_DIR}/${PROJECT_NAME}-config.cmake")
-set(CLUPP_EXPORTED_TARGET "${PROJECT_NAME}-target")
+set(CAPPA_CLUSTER_GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(CAPPA_CLUSTER_VERSION_CONFIG "${CAPPA_CLUSTER_GENERATED_DIR}/${PROJECT_NAME}-config-version.cmake")
+set(CAPPA_CLUSTER_PROJECT_CONFIG "${CAPPA_CLUSTER_GENERATED_DIR}/${PROJECT_NAME}-config.cmake")
+set(CAPPA_CLUSTER_EXPORTED_TARGET "${PROJECT_NAME}-target")
 
 # use the version defined by the project command we issued at the top
 write_basic_package_version_file(
-  "${CLUPP_VERSION_CONFIG}" COMPATIBILITY SameMajorVersion
+  "${CAPPA_CLUSTER_VERSION_CONFIG}" COMPATIBILITY SameMajorVersion
 )
 
 configure_package_config_file(
-  "cmake/CluppConfig.cmake.in"
-  "${CLUPP_PROJECT_CONFIG}"
-  INSTALL_DESTINATION "${CLUPP_PACKAGE_DESTINATION}"
+  "cmake/CappaClusterConfig.cmake.in"
+  "${CAPPA_CLUSTER_PROJECT_CONFIG}"
+  INSTALL_DESTINATION "${CAPPA_CLUSTER_PACKAGE_DESTINATION}"
 )
 
 # install the library binary and export its properties to a .cmake file
 install(
   TARGETS ${PROJECT_NAME}
-  EXPORT "${CLUPP_EXPORTED_TARGET}" # CMakeFiles/Export/
+  EXPORT "${CAPPA_CLUSTER_EXPORTED_TARGET}" # CMakeFiles/Export/
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -82,19 +82,19 @@ install(
 
 # install the library headers
 install(
-  DIRECTORY include/clupp
+  DIRECTORY include/cappa
   DESTINATION include
 )
 
-# install the clupp-config.cmake file and its version info
+# install the cappa-cluster-config.cmake file and its version info
 install(
-  FILES "${CLUPP_PROJECT_CONFIG}" "${CLUPP_VERSION_CONFIG}"
-  DESTINATION "${CLUPP_PACKAGE_DESTINATION}"
+  FILES "${CAPPA_CLUSTER_PROJECT_CONFIG}" "${CAPPA_CLUSTER_VERSION_CONFIG}"
+  DESTINATION "${CAPPA_CLUSTER_PACKAGE_DESTINATION}"
 )
 
-# install the clupp-target* information
+# install the cappa-cluster-target* information
 install(
-  EXPORT "${CLUPP_EXPORTED_TARGET}"
-  NAMESPACE "clupp::"
-  DESTINATION "${CLUPP_PACKAGE_DESTINATION}"
+  EXPORT "${CAPPA_CLUSTER_EXPORTED_TARGET}"
+  NAMESPACE "cappa::"
+  DESTINATION "${CAPPA_CLUSTER_PACKAGE_DESTINATION}"
 )

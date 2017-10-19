@@ -1,5 +1,5 @@
-#ifndef CLUPP_PAM_HPP
-#define CLUPP_PAM_HPP
+#ifndef CAPPA_CLUSTER_PAM_HPP
+#define CAPPA_CLUSTER_PAM_HPP
 
 #include <Eigen/Dense>
 
@@ -7,7 +7,8 @@
 #include <set>
 #include <vector>
 
-namespace clupp {
+namespace cappa {
+namespace cluster {
 
 /**
  * The clustering result after partitioning around medoids.
@@ -39,5 +40,6 @@ struct pam_result {
  */
 pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix);
 }
+}
 
-#endif //CLUPP_PAM_HPP
+#endif //CAPPA_CLUSTER_PAM_HPP

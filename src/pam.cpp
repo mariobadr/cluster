@@ -1,10 +1,9 @@
-#include "clupp/pam.hpp"
+#include "cappa/cluster/pam.hpp"
 
-#include "clupp/distance.hpp"
+#include "cappa/cluster/distance.hpp"
 
-#include <iostream>
-
-namespace clupp {
+namespace cappa {
+namespace cluster {
 
 /**
  * Data used during the PAM algorithm.
@@ -314,5 +313,6 @@ pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
   }
 
   return final_clustering;
+}
 }
 }

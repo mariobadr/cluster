@@ -1,13 +1,15 @@
-#ifndef CLUPP_DISTANCE_HPP
-#define CLUPP_DISTANCE_HPP
+#ifndef CAPPA_CLUSTER_DISTANCE_HPP
+#define CAPPA_CLUSTER_DISTANCE_HPP
 
 #include <Eigen/Dense>
 
-namespace clupp {
+namespace cappa {
+namespace cluster {
 
 double euclidean_distance(Eigen::VectorXd const &vector1, Eigen::VectorXd const &vector2);
 
 Eigen::MatrixXd calculate_distance_matrix(Eigen::MatrixXd const &matrix);
 }
+}
 
-#endif //CLUPP_DISTANCE_HPP
+#endif //CAPPA_CLUSTER_DISTANCE_HPP

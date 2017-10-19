@@ -1,4 +1,4 @@
-#include <clupp/pam.hpp>
+#include <cappa/cluster/pam.hpp>
 
 #include <iostream>
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   data << 942, 2633, 2654, 2137, 373, 434, 1495, 1230;
 
   // group the data into k clusters
-  auto const result = clupp::partition_around_medoids(k, data);
+  auto const result = cappa::cluster::partition_around_medoids(k, data);
 
   std::cout << "Medoids:\n";
   for(auto const &medoid : result.medoids) {

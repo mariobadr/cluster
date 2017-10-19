@@ -1,7 +1,7 @@
 # potential build options
 
 option(
-  CLUPP_BUILD_EXAMPLES
-  "Build the example executables that use clupp"
+  CAPPA_CLUSTER_BUILD_EXAMPLES
+  "Build the example executables that use the cluster library"
   OFF
 )
