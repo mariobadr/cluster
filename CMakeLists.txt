@@ -33,7 +33,7 @@ target_link_libraries(
 )
 
 if(NOT CMAKE_DEBUG_POSTFIX)
-  set(CMAKE_DEBUG_POSTFIX d)
+  set(CMAKE_DEBUG_POSTFIX "-debug")
 endif()
 
 set_target_properties(
