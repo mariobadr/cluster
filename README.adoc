@@ -6,6 +6,7 @@ It can cluster data using the partition around medoids (PAM) algorithm described
     Leonard Kaufman and Peter J Rousseeuw. Finding Groups in Data. 1990.
 
 Data is represented using a dynamic `Eigen` matrix with type `double`.
+Please ensure you have installed https://github.com/eigenteam/eigen-git-mirror[Eigen] version 3.3.
 
 == Usage
 
