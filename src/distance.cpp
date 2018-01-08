@@ -1,6 +1,5 @@
-#include "cappa/cluster/distance.hpp"
+#include "cluster/distance.hpp"
 
-namespace cappa {
 namespace cluster {
 
 double euclidean_distance(Eigen::VectorXd const &vector1, Eigen::VectorXd const &vector2)
@@ -21,6 +20,5 @@ Eigen::MatrixXd calculate_distance_matrix(Eigen::MatrixXd const &matrix)
   }
 
   return distance_matrix;
-}
 }
 }

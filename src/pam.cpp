@@ -1,8 +1,7 @@
-#include "cappa/cluster/pam.hpp"
+#include "cluster/pam.hpp"
 
-#include "cappa/cluster/distance.hpp"
+#include "cluster/distance.hpp"
 
-namespace cappa {
 namespace cluster {
 
 /**
@@ -313,6 +312,5 @@ pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix)
   }
 
   return final_clustering;
-}
 }
 }

@@ -11,7 +11,7 @@ Data is represented using a dynamic `Eigen` matrix with type `double`.
 
 [source,cpp]
 ----
-#include <cappa/cluster/pam.hpp>
+#include <cluster/pam.hpp>
 
 int main()
 {
@@ -20,7 +20,7 @@ int main()
   data << 942, 2633, 2654, 2137, 373, 434, 1495, 1230;
 
   // group the data into 3 clusters
-  auto const result = cappa::cluster::partition_around_medoids(3, data);
+  auto const result = cluster::partition_around_medoids(3, data);
 
   return EXIT_SUCCESS;
 }
@@ -50,10 +50,10 @@ Documentation and example executables can also be built during compilation.
 Simply specify the build option during the configuration step in CMake.
 Using the already generated `cmake-build-release` directory from the previous section, we can:
 
-  cmake -H. -Bcmake-build-release -DCLUPP_BUILD_EXAMPLES=ON
+  cmake -H. -Bcmake-build-release -DCLUSTER_BUILD_EXAMPLES=ON
 
 Your IDE or Makefile should now include additional targets when you turn these options on.
-For example, enabling `CLUPP_BUILD_EXAMPLES` should provide access to the `pam-1D` target, which you can build:
+For example, enabling `CLUSTER_BUILD_EXAMPLES` should provide access to the `pam-1D` target, which you can build:
 
   cmake --build cmake-build-release/ --target pam-1D
 
@@ -67,5 +67,5 @@ If you would like to change the default installation directory, you must do so i
 
   cmake -H. -Bcmake-build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="`pwd`/my_install"
 
-If your project also uses cmake, you can find the CMake package configuration files at `<install-prefix>/lib/cmake/cappa-cluster`.
+If your project also uses cmake, you can find the CMake package configuration files at `<install-prefix>/lib/cmake/cluster`.
 

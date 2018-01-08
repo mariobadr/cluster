@@ -7,7 +7,6 @@
 #include <set>
 #include <vector>
 
-namespace cappa {
 namespace cluster {
 
 /**
@@ -39,7 +38,6 @@ struct pam_result {
  * @return The clustering found.
  */
 pam_result partition_around_medoids(int k, Eigen::MatrixXd const &matrix);
-}
 }
 
 #endif //CAPPA_CLUSTER_PAM_HPP
